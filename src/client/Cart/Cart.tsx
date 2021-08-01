@@ -1,3 +1,5 @@
+import React from 'react';
+import Button from '@material-ui/core/Button';
 import CartItem from './CartItem/CartItem';
 import { Wrapper } from './Cart.styles';
 import { CartItemType } from '../App';
@@ -6,9 +8,14 @@ type Props = {
   cartItems: CartItemType[];
   addToCart: (clickedItem: CartItemType) => void;
   removeFromCart: (id: number) => void;
+  clearCart: () => void;
+  setCartOpen: (carOpen: boolean) => void;
+  handlePurchase: (cartItems: CartItemType[]) => void;
+
 };
 
-const Cart: React.FC<Props> = ({ cartItems, addToCart, removeFromCart }) => {
+const Cart: React.FC<Props> = ({ cartItems, addToCart, removeFromCart, handlePurchase }) => {
+
   const calculateTotal = (items: CartItemType[]) =>
     items.reduce((ack: number, item) => ack + item.amount * item.price, 0);
 
@@ -24,7 +31,12 @@ const Cart: React.FC<Props> = ({ cartItems, addToCart, removeFromCart }) => {
           removeFromCart={removeFromCart}
         />
       ))}
-      <h2>Total: ${calculateTotal(cartItems).toFixed(2)}</h2>
+      <div className='order-wrapper'>
+        <h2>Total: ${calculateTotal(cartItems).toFixed(2)}</h2>
+        {cartItems.length !== 0 && <Button className='purchase-button' onClick={() => handlePurchase(cartItems)}>
+            <h2>Purchase</h2>
+        </Button>}
+      </div>
     </Wrapper>
   );
 };

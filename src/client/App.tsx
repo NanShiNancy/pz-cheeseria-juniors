@@ -12,6 +12,8 @@ import Badge from '@material-ui/core/Badge';
 // Styles
 import { Wrapper, StyledButton, StyledAppBar, HeaderTypography } from './App.styles';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
+import Snackbar from "@material-ui/core/Snackbar";
+import { Alert, Color } from "@material-ui/lab";
 // Types
 export type CartItemType = {
   id: number;
@@ -30,6 +32,9 @@ const getCheeses = async (): Promise<CartItemType[]> =>
 const App = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([] as CartItemType[]);
+  const [notificationOpen, setNotificationOpen] = React.useState(false);
+  const [notificationLevel, setNotificationLevel] = useState<string>('info');
+  const [notificationDetails, setNotificationDetails] = useState<string>('');
   const { data, isLoading, error } = useQuery<CartItemType[]>(
     'cheeses',
     getCheeses
@@ -56,6 +61,10 @@ const App = () => {
     });
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+  }
+
   const handleRemoveFromCart = (id: number) => {
     setCartItems(prev =>
       prev.reduce((ack, item) => {
@@ -69,7 +78,33 @@ const App = () => {
     );
   };
 
-  if (isLoading) return <LinearProgress />;
+  const handlePurchase = async (cartItems: CartItemType[]) => {
+    try {
+      const sendOrderRes = await fetch('api/order', {
+        method: 'post',
+        headers: { 'Content-type': 'application/json' },
+        body:
+          JSON.stringify({ newOrder: cartItems })
+      })
+      if (sendOrderRes && sendOrderRes.status === 200) {
+        clearCart();
+        setCartOpen(false);
+        setNotificationLevel('success');
+        setNotificationDetails('Purchase success!')
+      } else {
+        setNotificationLevel('error');
+        setNotificationDetails('Purchase failed!')
+      }
+    } catch (e) {
+      setNotificationLevel('error');
+      setNotificationDetails('Something went wrong!')
+      console.error(e.message)
+    } finally {
+      setNotificationOpen(true);
+    }
+  }
+
+  if (isLoading) return <LinearProgress/>;
   if (error) return <div>Something went wrong ...</div>;
 
   return (
@@ -116,13 +151,20 @@ const App = () => {
           cartItems={cartItems}
           addToCart={handleAddToCart}
           removeFromCart={handleRemoveFromCart}
+          clearCart={clearCart}
+          setCartOpen={setCartOpen}
+          handlePurchase={handlePurchase}
         />
       </Drawer>
-
+      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} onClose={() => setNotificationOpen(false)}
+                open={notificationOpen}
+                autoHideDuration={2000}>
+        <Alert severity={notificationLevel as Color}>{notificationDetails}</Alert>
+      </Snackbar>
       <Grid container spacing={3}>
         {data?.map(item => (
           <Grid item key={item.id} xs={12} sm={4}>
-            <Item item={item} handleAddToCart={handleAddToCart} />
+            <Item item={item} handleAddToCart={handleAddToCart}/>
           </Grid>
         ))}
       </Grid>

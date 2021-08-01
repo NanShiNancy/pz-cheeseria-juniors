@@ -19,7 +19,7 @@ type Props = {
 
 const renderItemDetails = (item: CartItemType, itemProp: keyof CartItemType) => {
   switch (itemProp) {
-    case "image":
+    case 'image':
       return (<img src={item.image} alt={item.title}/>)
     default:
       return (<p>{item[itemProp]}</p>)
