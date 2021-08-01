@@ -3,6 +3,8 @@ import { useQuery } from 'react-query';
 // Components
 import Item from './Cart/Item/Item';
 import Cart from './Cart/Cart';
+import RecentPurchases from './RecentPurchases/RecentPurchases';
+//Material UI
 import Drawer from '@material-ui/core/Drawer';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Grid from '@material-ui/core/Grid';
@@ -12,8 +14,8 @@ import Badge from '@material-ui/core/Badge';
 // Styles
 import { Wrapper, StyledButton, StyledAppBar, HeaderTypography } from './App.styles';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
-import Snackbar from "@material-ui/core/Snackbar";
-import { Alert, Color } from "@material-ui/lab";
+import Snackbar from '@material-ui/core/Snackbar';
+import { Alert, Color } from '@material-ui/lab';
 // Types
 export type CartItemType = {
   id: number;
@@ -27,7 +29,7 @@ export type CartItemType = {
 
 
 const getCheeses = async (): Promise<CartItemType[]> =>
-  await (await fetch(`api/cheeses`)).json();
+  await (await fetch('api/cheeses')).json();
 
 const App = () => {
   const [cartOpen, setCartOpen] = useState(false);
@@ -35,6 +37,7 @@ const App = () => {
   const [notificationOpen, setNotificationOpen] = React.useState(false);
   const [notificationLevel, setNotificationLevel] = useState<string>('info');
   const [notificationDetails, setNotificationDetails] = useState<string>('');
+  const [recentPurchasesOpen, setRecentPurchasesOpen] = useState(false);
   const { data, isLoading, error } = useQuery<CartItemType[]>(
     'cheeses',
     getCheeses
@@ -118,8 +121,8 @@ const App = () => {
             justify="space-between"
             alignItems="center"
           >
-            <StyledButton>
-              <RestoreIcon />
+            <StyledButton onClick={() => setRecentPurchasesOpen(true)}>
+              <RestoreIcon/>
               <Typography variant="subtitle2">
                 Recent Purchases
               </Typography>
@@ -145,7 +148,9 @@ const App = () => {
           </Grid>
         </Toolbar>
       </StyledAppBar>
-
+      <Drawer anchor='left' open={recentPurchasesOpen} onClose={() => setRecentPurchasesOpen(false)}>
+        <RecentPurchases/>
+      </Drawer>
       <Drawer anchor='right' open={cartOpen} onClose={() => setCartOpen(false)}>
         <Cart
           cartItems={cartItems}
