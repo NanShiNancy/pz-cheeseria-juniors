@@ -33,7 +33,8 @@ const Cart: React.FC<Props> = ({ cartItems, addToCart, removeFromCart, handlePur
       ))}
       <div className='order-wrapper'>
         <h2>Total: ${calculateTotal(cartItems).toFixed(2)}</h2>
-        {cartItems.length !== 0 && <Button className='purchase-button' onClick={() => handlePurchase(cartItems)}>
+        {cartItems.length !== 0 &&
+        <Button className='purchase-button' data-cy='cart-purchase' onClick={() => handlePurchase(cartItems)}>
             <h2>Purchase</h2>
         </Button>}
       </div>

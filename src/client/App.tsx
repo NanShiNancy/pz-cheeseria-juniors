@@ -123,7 +123,7 @@ const App = () => {
           >
             <StyledButton onClick={() => setRecentPurchasesOpen(true)}>
               <RestoreIcon/>
-              <Typography variant="subtitle2">
+              <Typography data-cy='recent-purchases' variant="subtitle2">
                 Recent Purchases
               </Typography>
             </StyledButton>
@@ -140,7 +140,7 @@ const App = () => {
                 <AddShoppingCartIcon />
               </Badge>
 
-              <Typography variant="subtitle2">
+              <Typography data-cy='go-to-cart' variant="subtitle2">
                 Cart
               </Typography>
             </StyledButton>
@@ -164,7 +164,7 @@ const App = () => {
       <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} onClose={() => setNotificationOpen(false)}
                 open={notificationOpen}
                 autoHideDuration={2000}>
-        <Alert severity={notificationLevel as Color}>{notificationDetails}</Alert>
+        <Alert data-cy='main-notification' severity={notificationLevel as Color}>{notificationDetails}</Alert>
       </Snackbar>
       <Grid container spacing={3}>
         {data?.map(item => (

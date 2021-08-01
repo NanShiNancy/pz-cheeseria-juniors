@@ -18,7 +18,7 @@ const RecentPurchasesItem: React.FC<Props> = ({ item }: Props) => (
         <p>Total: ${(item.amount * item.price).toFixed(2)}</p>
       </div>
       <div className='buttons'>
-        <p>Amount:{item.amount}</p>
+        <p>Amount: <span data-cy={`recent-purchase-${item.id}-amount`}>{item.amount}</span></p>
       </div>
     </div>
     <img src={item.image} alt={item?.title}/>
